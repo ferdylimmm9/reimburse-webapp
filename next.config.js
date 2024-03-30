@@ -11,7 +11,6 @@ const withPWA = require('next-pwa')({
 });
 
 const nextConfig = withPWA({
-  basePath: '/reimburse-webapp',
   reactStrictMode: false, // 👈 DISABLING THIS TO AVOID DOUBLE RENDER
   images: {
     unoptimized: true,
