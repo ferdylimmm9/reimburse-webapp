@@ -1,4 +1,7 @@
-import { EmployeeModel } from 'modules/user/components/user-form-type';
+import {
+  EmployeeModel,
+  EmployeeRoleEnum,
+} from 'modules/user/components/user-form-type';
 import React from 'react';
 
 export const AUTH_KEY = 'auth-key';
@@ -21,11 +24,15 @@ export function setAuth(value: EmployeeModel | undefined) {
 export interface AuthContextProps {
   user: EmployeeModel | undefined;
   handleUser: (value: EmployeeModel | undefined) => void;
+  isUser: boolean;
+  isAdmin: boolean;
 }
 
 export const AuthContext = React.createContext<AuthContextProps>({
   handleUser: () => {},
   user: undefined,
+  isAdmin: false,
+  isUser: false,
 });
 
 export function AuthProvider({ children }) {
@@ -34,6 +41,9 @@ export function AuthProvider({ children }) {
     setUser(value);
     setAuth(value);
   }, []);
+
+  const isAdmin = user?.peran === EmployeeRoleEnum.admin;
+  const isUser = user?.peran === EmployeeRoleEnum.user;
 
   //sync when open
   React.useEffect(() => {
@@ -47,6 +57,8 @@ export function AuthProvider({ children }) {
       value={{
         handleUser,
         user,
+        isAdmin,
+        isUser,
       }}
     >
       {children}

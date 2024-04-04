@@ -32,6 +32,7 @@ export type ReimburseModel = {
   tanggal_dibuat: Date;
   tanggal_diubah: Date;
   tanggal_pelunasan: Date | null;
+  total_pelunasan: number | null;
   tanggal_penolakan: Date | null;
   deskripsi_penolakan: string | null;
 
@@ -115,14 +116,14 @@ export const reimburses: ReimburseModel[] = [
     nip_pemohon: employees[0].nip,
     nip_pic: null,
     perjalanan_id: itinenaries[0].id,
-    status: ReimburseStatusEnum.rejected,
+    status: ReimburseStatusEnum.pending,
     details: reimbursesDetail,
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
-    deskripsi_penolakan:
-      'Consectetur pariatur deserunt irure labore voluptate veniam commodo excepteur veniam.',
+    deskripsi_penolakan: null,
     tanggal_pelunasan: null,
-    tanggal_penolakan: new Date(),
+    total_pelunasan: null,
+    tanggal_penolakan: null,
   },
   {
     deskripsi: 'Finished',
@@ -137,6 +138,7 @@ export const reimburses: ReimburseModel[] = [
     tanggal_diubah: new Date(),
     tanggal_pelunasan: new Date(),
     deskripsi_penolakan: null,
+    total_pelunasan: 4900000,
     tanggal_penolakan: null,
   },
   {
@@ -151,8 +153,32 @@ export const reimburses: ReimburseModel[] = [
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
     tanggal_pelunasan: null,
+    total_pelunasan: null,
     deskripsi_penolakan:
       'Dolor aliquip amet proident ullamco id duis officia ea amet dolore sit.',
     tanggal_penolakan: new Date(),
   },
 ];
+
+export const ReimburseFinishFormSchema = () =>
+  Yup.object({
+    total: Yup.number().default(0).required(),
+    deskripsi: Yup.string().default(''),
+    kas_id: Yup.string().required().default(''),
+    tanggal_pelunasan: Yup.date().default(new Date()).required(),
+    pengembalian_id: Yup.string().default(''),
+  });
+
+export type ReimburseFinishFormType = Yup.InferType<
+  ReturnType<typeof ReimburseFinishFormSchema>
+>;
+
+export const ReimburseRejectFormSchema = () =>
+  Yup.object({
+    deskripsi_penolakan: Yup.string().default('').required(),
+    tanggal_penolakan: Yup.date().default(new Date()).required(),
+  });
+
+export type ReimburseRejectFormType = Yup.InferType<
+  ReturnType<typeof ReimburseRejectFormSchema>
+>;

@@ -1,4 +1,13 @@
-import { Button, Flex, SegmentedControl, Text } from '@mantine/core';
+import {
+  Button,
+  Flex,
+  Modal,
+  SegmentedControl,
+  SimpleGrid,
+  Text,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { Check, X } from '@phosphor-icons/react';
 import NavigationRoutes from 'components/common/side-navigation/navigations';
 import Form from 'components/form';
 import { format } from 'date-fns';
@@ -10,6 +19,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import ReimburseDetailForm from './reimburse-detail-form';
+import ReimburseFinishFormDialog from './reimburse-finish-form-dialog';
 import {
   ReimburseFormSchema,
   ReimburseFormType,
@@ -18,6 +28,7 @@ import {
   ReimburseTypeEnum,
 } from './reimburse-form-type';
 import ReimburseInformationForm from './reimburse-information-form';
+import ReimburseRejectFormDialog from './reimburse-reject-form-dialog';
 
 interface ReimburseFormProps {
   reimburse?: ReimburseModel;
@@ -25,9 +36,11 @@ interface ReimburseFormProps {
 
 export default function ReimburseForm(props: ReimburseFormProps) {
   const { reimburse } = props;
-  const { user } = useAuth();
-  const [segment, setSegment] = React.useState<string>('Informasi');
+  const { user, isAdmin } = useAuth();
 
+  const [segment, setSegment] = React.useState<string>('Informasi');
+  const [isOpenFinished, handleFinished] = useDisclosure(false);
+  const [isOpenReject, handleReject] = useDisclosure(false);
   const { replace, query } = useRouter();
 
   const data = query.data
@@ -161,6 +174,45 @@ export default function ReimburseForm(props: ReimburseFormProps) {
         {segment === 'Informasi' && <ReimburseInformationForm />}
         {segment === 'Detail' && <ReimburseDetailForm />}
         {dateComponent}
+        {reimburse && isAdmin && (
+          <SimpleGrid cols={2} mt={16}>
+            <Button
+              onClick={handleReject.open}
+              rightSection={<X size={16} />}
+              variant="outline"
+              color="red"
+            >
+              Tolak Reimburse
+            </Button>
+            <Button
+              onClick={handleFinished.open}
+              rightSection={<Check size={16} />}
+              variant="outline"
+            >
+              Terima Reimburse
+            </Button>
+            <Modal
+              title={<Text fw={600}>Terima Reimburse</Text>}
+              centered
+              opened={isOpenFinished}
+              onClose={handleFinished.close}
+              withCloseButton={false}
+              closeOnClickOutside={false}
+            >
+              <ReimburseFinishFormDialog onClose={handleFinished.close} />
+            </Modal>
+            <Modal
+              title={<Text fw={600}>Tolak Reimburse</Text>}
+              centered
+              opened={isOpenReject}
+              onClose={handleReject.close}
+              withCloseButton={false}
+              closeOnClickOutside={false}
+            >
+              <ReimburseRejectFormDialog onClose={handleReject.close} />
+            </Modal>
+          </SimpleGrid>
+        )}
       </FormLayout>
     </Form>
   );

@@ -63,7 +63,7 @@ export const accountDetails: AccountDetailModel[] = [
 export const accounts: AccountModel[] = [
   {
     id: '1',
-    nama: 'Kas A',
+    nama: 'Kas Kecil',
     deskripsi:
       'Aliquip duis anim eu anim amet dolor exercitation qui aute irure duis nostrud est ex.',
     tanggal_dibuat: new Date(),
@@ -72,7 +72,7 @@ export const accounts: AccountModel[] = [
   },
   {
     id: '2',
-    nama: 'Kas B',
+    nama: 'Kas Besar',
     deskripsi:
       'Aliquip duis anim eu anim amet dolor exercitation qui aute irure duis nostrud est ex.',
     tanggal_dibuat: new Date(),
@@ -81,7 +81,7 @@ export const accounts: AccountModel[] = [
   },
   {
     id: '3',
-    nama: 'Kas C',
+    nama: 'Kas Biasa',
     deskripsi:
       'Aliquip duis anim eu anim amet dolor exercitation qui aute irure duis nostrud est ex.',
     tanggal_dibuat: new Date(),

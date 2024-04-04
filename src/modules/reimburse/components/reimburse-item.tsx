@@ -73,6 +73,12 @@ export default function ReimburseItem(props: ReimburseModel) {
         return null;
     }
   }, [props.status, respondenLabel]);
+
+  const finishedAmountComponent = props.total_pelunasan && (
+    <Text fz={11}>
+      Total Pelunasan: Rp. {string2money(props.total_pelunasan)}
+    </Text>
+  );
   return (
     <ListItem
       onClick={() => push(route)}
@@ -81,20 +87,18 @@ export default function ReimburseItem(props: ReimburseModel) {
       }}
     >
       <Flex direction="column" gap={16} w="100%">
-        <Flex direction="row" justify="space-between" align="center" w="100%">
-          <Title order={6}>{requesterLabel}</Title>
+        <Flex direction="column" align="end" pos="absolute" top={16} right={16}>
+          <ReimburseStatusBadge status={props.status} />
           <Text fz={11}>Total: {string2money(total)}</Text>
         </Flex>
+        <Title order={6}>{requesterLabel}</Title>
         <Text fz={11}>Jenis Reimburse: {props.jenis}</Text>
         <Text fz={11} pos="absolute" right={16} bottom={16}>
           {format(props.tanggal_dibuat, 'dd MMM yyy, HH:mm')}
         </Text>
-        <Flex direction="row" align="center" gap={4}>
-          <Text fz={11}>Status: </Text>
-          <ReimburseStatusBadge status={props.status} />
-        </Flex>
         {rejectedComponent}
         {respondenComponent}
+        {finishedAmountComponent}
         {timeComponent}
       </Flex>
     </ListItem>

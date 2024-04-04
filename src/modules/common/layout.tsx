@@ -4,7 +4,6 @@ import AppLayout from 'components/common/app-layout/app-layout';
 import NavigationRoutes from 'components/common/side-navigation/navigations';
 import { useFormState } from 'components/form';
 import useAuth from 'hooks/use-auth';
-import { EmployeeRoleEnum } from 'modules/user/components/user-form-type';
 import { useRouter } from 'next/router';
 import { useFormContext } from 'react-hook-form';
 
@@ -23,9 +22,7 @@ export function FormLayout({
   const { disabled, setDisabled } = useFormState();
   const { reset, getValues } = useFormContext();
   const isEdit = !!getValues('data');
-  const { user } = useAuth();
-
-  const isAdmin = user?.peran === EmployeeRoleEnum.admin;
+  const { isAdmin } = useAuth();
 
   const cancelButton = !disabled && isEdit && (
     <Button
@@ -103,8 +100,8 @@ interface ListLayoutProps {
 
 export function ListLayout({ children, createNavigation }: ListLayoutProps) {
   const { push } = useRouter();
-  const { user } = useAuth();
-  const isAdmin = user?.peran === EmployeeRoleEnum.admin;
+  const { isAdmin } = useAuth();
+
   return (
     <AppLayout
       back

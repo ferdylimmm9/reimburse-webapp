@@ -15,10 +15,7 @@ import {
 } from '@phosphor-icons/react';
 import NavigationRoutes from 'components/common/side-navigation/navigations';
 import useAuth from 'hooks/use-auth';
-import {
-  EmployeeRoleEnum,
-  employees,
-} from 'modules/user/components/user-form-type';
+import { employees } from 'modules/user/components/user-form-type';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -79,11 +76,9 @@ export const userNavigationItems: NavigationItemType[] = [
 ];
 
 export default function Home() {
-  const { user, handleUser } = useAuth();
+  const { user, handleUser, isAdmin, isUser } = useAuth();
 
   const { replace } = useRouter();
-  const isAdmin = user?.peran === EmployeeRoleEnum.admin;
-  const isUser = user?.peran === EmployeeRoleEnum.user;
 
   const onLogout = React.useCallback(() => {
     handleUser(undefined);
