@@ -137,7 +137,7 @@ export default function ReimburseForm(props: ReimburseFormProps) {
   const dateComponent = React.useMemo(() => {
     if (reimburse?.tanggal_pelunasan) {
       return (
-        <Text>
+        <Text fz={11} my={16}>
           Diterima: {format(reimburse.tanggal_pelunasan, 'dd MMM yyyy, HH:mm')}
         </Text>
       );
@@ -174,7 +174,7 @@ export default function ReimburseForm(props: ReimburseFormProps) {
         {segment === 'Informasi' && <ReimburseInformationForm />}
         {segment === 'Detail' && <ReimburseDetailForm />}
         {dateComponent}
-        {reimburse && isAdmin && (
+        {reimburse && isAdmin && isEditable && (
           <SimpleGrid cols={2} mt={16}>
             <Button
               onClick={handleReject.open}

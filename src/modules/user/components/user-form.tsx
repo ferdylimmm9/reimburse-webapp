@@ -1,9 +1,8 @@
-import { Flex } from '@mantine/core';
+import { SegmentedControl } from '@mantine/core';
 import Form from 'components/form';
-import Input from 'components/input';
 import useYupValidationResolver from 'hooks/use-yup-validation-resolver';
 import { FormLayout } from 'modules/common/layout';
-import { teams } from 'modules/team/components/team-form-type';
+import ReimburseList from 'pages/reimburses';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -14,6 +13,7 @@ import {
   EmployeeRoleEnum,
   EmployeeStatusEnum,
 } from './user-form-type';
+import UserInformationForm from './user-information-form';
 
 interface UserFormProps {
   user?: EmployeeModel;
@@ -21,6 +21,7 @@ interface UserFormProps {
 
 export default function UserForm(props: UserFormProps) {
   const { user } = props;
+  const [segment, setSegment] = React.useState('Informasi');
   const defaultValues = React.useMemo<EmployeeFormType>(() => {
     return {
       team_id: user?.team_id ?? '',
@@ -51,62 +52,17 @@ export default function UserForm(props: UserFormProps) {
   return (
     <Form methods={methods} onSubmit={onSubmit} defaultEditable={!props.user}>
       <FormLayout isEditable>
-        <Flex direction="column" gap={16}>
-          {isEdit && (
-            <Input
-              type="text"
-              name="nip"
-              disabled={isEdit}
-              label="Nomor Induk Pegawai"
-            />
-          )}
-          <Input
-            type="text"
-            name="nama"
-            label="Nama"
-            placeholder="Masukkan Nama"
+        {isEdit && (
+          <SegmentedControl
+            w="100%"
+            mb={16}
+            value={segment}
+            onChange={setSegment}
+            data={['Informasi', 'Riwayat Reimburse']}
           />
-          <Input
-            type="select"
-            name="peran"
-            label="Peran"
-            placeholder="Masukkan Peran"
-            data={[EmployeeRoleEnum.admin, EmployeeRoleEnum.user]}
-          />
-          <Input
-            searchable
-            clearable
-            type="select"
-            name="team_id"
-            label="Team"
-            placeholder="Masukkan Team"
-            data={teams.map((team) => {
-              return {
-                value: team.id,
-                label: team.nama,
-              };
-            })}
-          />
-          <Input
-            type="select"
-            name="status"
-            label="Status Karyawan"
-            placeholder="Masukkan Status Karyawan"
-            data={[EmployeeStatusEnum.active, EmployeeStatusEnum.inactive]}
-          />
-          <Input
-            type="text"
-            name="nomor_rekening"
-            label="Nomor Rekening"
-            placeholder="Masukkan Nomor Rekening"
-          />
-          <Input
-            type="password"
-            name="kata_sandi"
-            label="Kata Sandi"
-            placeholder="Masukkan Kata Sandi"
-          />
-        </Flex>
+        )}
+        {segment === 'Informasi' && <UserInformationForm />}
+        {segment === 'Riwayat Reimburse' && <ReimburseList />}
       </FormLayout>
     </Form>
   );
