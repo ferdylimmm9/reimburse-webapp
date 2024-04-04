@@ -15,6 +15,7 @@ export default function ItinenaryItem(props: ItinenaryModel) {
     dateFormating(props.tanggal_mulai),
     dateFormating(props.tanggal_selesai),
   ].join(' - ');
+
   React.useEffect(() => {
     prefetch(route);
   }, [prefetch, route]);
