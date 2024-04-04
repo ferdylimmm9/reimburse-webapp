@@ -1,13 +1,13 @@
 import NavigationRoutes from 'components/common/side-navigation/navigations';
 import { ListLayout } from 'modules/common/layout';
-import DepartmentList from 'modules/department/list';
+import TeamList from 'modules/team/list';
 import { NextPageWithLayout } from 'pages/_app';
 
-export default DepartmentList;
+export default TeamList;
 
-(DepartmentList as NextPageWithLayout).getLayout = (page) => {
+(TeamList as NextPageWithLayout).getLayout = (page) => {
   return (
-    <ListLayout createNavigation={NavigationRoutes.createDepartment}>
+    <ListLayout createNavigation={NavigationRoutes.createTeam}>
       {page}
     </ListLayout>
   );

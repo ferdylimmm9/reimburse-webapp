@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 import { MantineProvider } from '@mantine/core';
 import NavigationRoutes from 'components/common/side-navigation/navigations';
+import { AuthProvider } from 'hooks/use-auth';
 import { getIsAppFirstRun } from 'modules/onboarding';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { IBM_Plex_Sans } from 'next/font/google';
-
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
@@ -59,7 +59,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         />
       </Head>
       <MantineProvider theme={theme}>
-        {getLayout(<Component {...pageProps} />)}
+        <AuthProvider>{getLayout(<Component {...pageProps} />)}</AuthProvider>
       </MantineProvider>
     </>
   );

@@ -3,18 +3,30 @@ import { Disc, Pencil, Plus, Trash, X } from '@phosphor-icons/react';
 import AppLayout from 'components/common/app-layout/app-layout';
 import NavigationRoutes from 'components/common/side-navigation/navigations';
 import { useFormState } from 'components/form';
+import useAuth from 'hooks/use-auth';
+import { EmployeeRoleEnum } from 'modules/user/components/user-form-type';
 import { useRouter } from 'next/router';
 import { useFormContext } from 'react-hook-form';
 
 interface FormLayoutProps {
   children: React.ReactNode;
   onDelete?: Function;
+  isEditable?: boolean;
+  rightIconProps?: React.ReactNode;
 }
 
-export function FormLayout({ children, onDelete }: FormLayoutProps) {
+export function FormLayout({
+  children,
+  onDelete,
+  isEditable = false,
+}: FormLayoutProps) {
   const { disabled, setDisabled } = useFormState();
   const { reset, getValues } = useFormContext();
   const isEdit = !!getValues('data');
+  const { user } = useAuth();
+
+  const isAdmin = user?.peran === EmployeeRoleEnum.admin;
+
   const cancelButton = !disabled && isEdit && (
     <Button
       color="red"
@@ -45,7 +57,7 @@ export function FormLayout({ children, onDelete }: FormLayoutProps) {
   );
 
   const deleteButton =
-    disabled && onDelete
+    !!disabled && !!onDelete
       ? ({
           onClick: onDelete,
           children: <Trash size={16} />,
@@ -54,7 +66,8 @@ export function FormLayout({ children, onDelete }: FormLayoutProps) {
         } as React.ComponentProps<typeof ActionIcon<'button'>>)
       : undefined;
 
-  const cols = disabled || !isEdit ? 1 : 2;
+  const cols = [editButton, cancelButton, submitButton].filter(Boolean).length;
+
   const bottomContainer = (
     <Card withBorder>
       <SimpleGrid cols={cols} w="100%" maw={768} m="auto">
@@ -64,15 +77,19 @@ export function FormLayout({ children, onDelete }: FormLayoutProps) {
       </SimpleGrid>
     </Card>
   );
+
+  const hasFooter = isEditable ? true : isAdmin;
+  const h = hasFooter ? 'calc(100dvh - 55px - 85px)' : 'calc(100dvh - 55px)';
+
   return (
     <AppLayout
       back
       mainContainerProps={{
-        h: 'calc(100dvh - 55px - 85px)',
+        h,
         padding: 16,
       }}
       rightIconProps={deleteButton}
-      bottomContainer={bottomContainer}
+      bottomContainer={hasFooter ? bottomContainer : undefined}
     >
       {children}
     </AppLayout>
@@ -86,13 +103,19 @@ interface ListLayoutProps {
 
 export function ListLayout({ children, createNavigation }: ListLayoutProps) {
   const { push } = useRouter();
+  const { user } = useAuth();
+  const isAdmin = user?.peran === EmployeeRoleEnum.admin;
   return (
     <AppLayout
       back
-      rightIconProps={{
-        onClick: () => push(createNavigation),
-        children: <Plus size={16} />,
-      }}
+      rightIconProps={
+        isAdmin
+          ? {
+              onClick: () => push(createNavigation),
+              children: <Plus size={16} />,
+            }
+          : undefined
+      }
     >
       {children}
     </AppLayout>

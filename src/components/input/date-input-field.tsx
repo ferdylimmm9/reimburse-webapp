@@ -24,6 +24,9 @@ export default function DateInputField(props: DateInputFieldProps) {
       {...rest}
       {...(field as any)}
       dropdownType="modal"
+      modalProps={{
+        centered: true,
+      }}
       disabled={_disabled}
       value={field.value}
       onChange={(val) => {

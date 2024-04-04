@@ -53,10 +53,10 @@ export default function AppLayout(props: AppLayoutProps) {
         return 'Buat Perjalanan';
       case NavigationRoutes.detailItinerary:
         return 'Lihat Perjalanan';
-      case NavigationRoutes.createDepartment:
-        return 'Buat Departemen';
-      case NavigationRoutes.viewDepartment:
-        return 'Lihat Departemen';
+      case NavigationRoutes.createTeam:
+        return 'Buat Team';
+      case NavigationRoutes.viewTeam:
+        return 'Lihat Team';
       case NavigationRoutes.createAccount:
         return 'Buat Kas';
       case NavigationRoutes.detailAccount:
@@ -75,8 +75,8 @@ export default function AppLayout(props: AppLayoutProps) {
         return 'Daftar Karyawan';
       case NavigationRoutes.itineraries:
         return 'Daftar Perjalanan';
-      case NavigationRoutes.departments:
-        return 'Daftar Departemen';
+      case NavigationRoutes.teams:
+        return 'Daftar Team';
       case NavigationRoutes.accounts:
         return 'Daftar Kas';
       default:

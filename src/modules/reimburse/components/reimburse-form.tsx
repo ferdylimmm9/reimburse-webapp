@@ -1,14 +1,15 @@
-import { Flex } from '@mantine/core';
+import { Button, Flex, SegmentedControl, Text } from '@mantine/core';
+import NavigationRoutes from 'components/common/side-navigation/navigations';
 import Form from 'components/form';
-import Input from 'components/input';
 import { format } from 'date-fns';
+import useAuth from 'hooks/use-auth';
 import useYupValidationResolver from 'hooks/use-yup-validation-resolver';
 import { FormLayout } from 'modules/common/layout';
-import { itinenaries } from 'modules/itinenary/components/itinenary-form-type';
-import { employees } from 'modules/user/components/user-form-type';
+import { useRouter } from 'next/router';
 import React from 'react';
-import { useForm, useFormContext, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
+import ReimburseDetailForm from './reimburse-detail-form';
 import {
   ReimburseFormSchema,
   ReimburseFormType,
@@ -16,59 +17,43 @@ import {
   ReimburseStatusEnum,
   ReimburseTypeEnum,
 } from './reimburse-form-type';
+import ReimburseInformationForm from './reimburse-information-form';
 
 interface ReimburseFormProps {
   reimburse?: ReimburseModel;
 }
 
-function SelectItinery() {
-  const { control } = useFormContext<ReimburseFormType>();
-  const type = useWatch({
-    control,
-    name: 'jenis',
-  });
-  switch (type) {
-    case ReimburseTypeEnum.itinerary:
-      return (
-        <Input
-          type="select"
-          name="perjalanan_id"
-          label="Perjalanan"
-          placeholder="Masukkan Perjalanan"
-          data={itinenaries.map((item) => {
-            return {
-              label: [
-                item.nama,
-                format(item.tanggal_mulai, 'dd MMM yyyy'),
-                format(item.tanggal_selesai, 'dd MMM yyyy'),
-              ].join(' - '),
-              value: item.id,
-            };
-          })}
-        />
-      );
-    case ReimburseTypeEnum.stationery:
-    default:
-      return null;
-  }
-}
-
 export default function ReimburseForm(props: ReimburseFormProps) {
   const { reimburse } = props;
+  const { user } = useAuth();
+  const [segment, setSegment] = React.useState<string>('Informasi');
+
+  const { replace, query } = useRouter();
+
+  const data = query.data
+    ? (JSON.parse(query.data as any) as ReimburseFormType)
+    : undefined;
+
   const defaultValues = React.useMemo<ReimburseFormType>(() => {
+    if (data) {
+      return {
+        ...data,
+        data: undefined,
+      };
+    }
     return {
       deskripsi: reimburse?.deskripsi ?? '',
       jenis: reimburse?.jenis ?? ReimburseTypeEnum.itinerary,
-      nip_pemohon: reimburse?.nip_pemohon ?? employees[3].nip,
+      nip_pemohon: reimburse?.nip_pemohon ?? user?.nip ?? '',
       nip_pic: reimburse?.nip_pemohon ?? null,
       status: reimburse?.status ?? ReimburseStatusEnum.pending,
       perjalanan_id: reimburse?.perjalanan_id ?? null,
       details: reimburse?.details?.map((detail) => {
         return {
+          peralatan_kantor_id: detail.peralatan_kantor_id,
           deskripsi: detail.deskripsi,
           file_url: detail.file_url,
           nama: detail.nama,
-          pengembalian_id: detail.pengembalian_id,
           subtotal: detail.subtotal,
           id: detail.id,
         };
@@ -79,11 +64,12 @@ export default function ReimburseForm(props: ReimburseFormProps) {
           nama: '',
           pengembalian_id: '',
           subtotal: 0,
+          peralatan_kantor_id: null,
         },
       ],
       data: reimburse,
     };
-  }, [reimburse]);
+  }, [data, reimburse, user?.nip]);
 
   const resolver = useYupValidationResolver(ReimburseFormSchema());
 
@@ -92,60 +78,89 @@ export default function ReimburseForm(props: ReimburseFormProps) {
     resolver,
   });
 
-  const { setValue } = methods;
-
   const onSubmit = React.useCallback(
     async (values: ReimburseFormType) => {},
     [],
   );
 
-  const isEdit = !!reimburse;
+  const isContribute = user?.nip === defaultValues.nip_pemohon;
+
+  const isEditable = React.useMemo(() => {
+    switch (defaultValues.status) {
+      case ReimburseStatusEnum.finished:
+      case ReimburseStatusEnum.rejected:
+        return false;
+      case ReimburseStatusEnum.pending:
+      default:
+        return true;
+    }
+  }, [defaultValues.status]);
+
+  const onCopy = React.useCallback(() => {
+    replace(
+      {
+        pathname: NavigationRoutes.createReimburse,
+        query: {
+          data: JSON.stringify(defaultValues),
+        },
+      },
+      NavigationRoutes.createReimburse,
+      {
+        shallow: true,
+      },
+    );
+  }, [defaultValues, replace]);
+
+  const copyButton = React.useMemo(() => {
+    return (
+      isContribute && (
+        <Button size="xs" onClick={onCopy} variant="outline">
+          Buat Ulang Reimburse
+        </Button>
+      )
+    );
+  }, [isContribute, onCopy]);
+
+  const dateComponent = React.useMemo(() => {
+    if (reimburse?.tanggal_pelunasan) {
+      return (
+        <Text>
+          Diterima: {format(reimburse.tanggal_pelunasan, 'dd MMM yyyy, HH:mm')}
+        </Text>
+      );
+    }
+    if (reimburse?.tanggal_penolakan) {
+      return (
+        <Flex direction="column" gap={16} my={16}>
+          <Text fz={11}>
+            Ditolak: {format(reimburse.tanggal_penolakan, 'dd MMM yyyy, HH:mm')}
+          </Text>
+          <Text fz={11}>Alasan Ditolak: {reimburse.deskripsi_penolakan}</Text>
+          {copyButton}
+        </Flex>
+      );
+    }
+
+    return null;
+  }, [copyButton, reimburse]);
 
   return (
-    <Form methods={methods} onSubmit={onSubmit}>
-      <FormLayout>
-        <Flex gap={16} direction="column">
-          <Input
-            type="select"
-            name="nip_pemohon"
-            data={employees.map((employee) => {
-              return {
-                value: employee.nip,
-                label: [employee.nip, employee.nama].join(' - '),
-              };
-            })}
-            label="Pemohon"
-            placeholder="Masukkan Pemohon"
-            disabled
-          />
-          <Input
-            type="text"
-            name="deskripsi"
-            label="Deskripsi"
-            placeholder="Masukkan Deskripsi"
-          />
-          <Input
-            type="select"
-            name="jenis"
-            label="Jenis Reimburse"
-            placeholder="Masukkan Jenis Reimburse"
-            data={[
-              {
-                value: ReimburseTypeEnum.itinerary,
-                label: 'Perjalanan',
-              },
-              {
-                value: ReimburseTypeEnum.stationery,
-                label: 'ATK (Alat Tulis Kantor)',
-              },
-            ]}
-            onAfterChange={() => {
-              setValue('perjalanan_id', null);
-            }}
-            disabled={isEdit}
-          />
-          <SelectItinery />
-        </Flex>
+    <Form
+      methods={methods}
+      onSubmit={onSubmit}
+      defaultEditable={!props.reimburse}
+    >
+      <FormLayout isEditable={isEditable ? isContribute : false}>
+        <SegmentedControl
+          value={segment}
+          onChange={setSegment}
+          fullWidth
+          data={['Informasi', 'Detail']}
+          mb={16}
+        />
+        {segment === 'Informasi' && <ReimburseInformationForm />}
+        {segment === 'Detail' && <ReimburseDetailForm />}
+        {dateComponent}
       </FormLayout>
     </Form>
   );

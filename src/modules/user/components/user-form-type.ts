@@ -1,10 +1,10 @@
-import { departments } from 'modules/department/components/department-form-type';
+import { TeamModel } from 'modules/team/components/team-form-type';
 import * as Yup from 'yup';
 export type EmployeeModel = {
   nip: string;
   nama: string;
-  departemen_id: string;
-  departemen_name: string;
+  team_id: string;
+  team_name: string;
   status: EmployeeStatusEnum;
   peran: EmployeeRoleEnum;
   kata_sandi: string;
@@ -27,7 +27,7 @@ export const EmployeeFormSchema = () =>
   Yup.object({
     nip: Yup.string().default(''),
     nama: Yup.string().required(),
-    departemen_id: Yup.string().default(''),
+    team_id: Yup.string().default(''),
     status: Yup.mixed<EmployeeStatusEnum>()
       .oneOf(Object.values(EmployeeStatusEnum))
       .default(EmployeeStatusEnum.active),
@@ -44,10 +44,38 @@ export type EmployeeFormType = Yup.InferType<
   data?: EmployeeModel;
 };
 
+//dummies
+export const _teams: Omit<TeamModel, 'nip_leader' | 'nama_leader'>[] = [
+  {
+    id: '1',
+    nama: 'Pajak',
+    tanggal_dibuat: new Date(),
+    tanggal_diubah: new Date(),
+  },
+  {
+    id: '2',
+    nama: 'Pajak A',
+    tanggal_dibuat: new Date(),
+    tanggal_diubah: new Date(),
+  },
+  {
+    id: '3',
+    nama: 'Pajak B',
+    tanggal_dibuat: new Date(),
+    tanggal_diubah: new Date(),
+  },
+  {
+    id: '4',
+    nama: 'Pajak C',
+    tanggal_dibuat: new Date(),
+    tanggal_diubah: new Date(),
+  },
+];
+
 export const employees: EmployeeModel[] = [
   {
-    departemen_id: departments[0].id,
-    departemen_name: departments[0].nama,
+    team_id: _teams[0].id,
+    team_name: _teams[0].nama,
     kata_sandi: '',
     nama: 'Alexander',
     nip: '2211',
@@ -58,8 +86,8 @@ export const employees: EmployeeModel[] = [
     tanggal_diubah: new Date(),
   },
   {
-    departemen_id: departments[1].id,
-    departemen_name: departments[1].nama,
+    team_id: _teams[1].id,
+    team_name: _teams[1].nama,
     kata_sandi: '',
     nama: 'Christine',
     nip: '2331',
@@ -70,8 +98,8 @@ export const employees: EmployeeModel[] = [
     tanggal_diubah: new Date(),
   },
   {
-    departemen_id: departments[3].id,
-    departemen_name: departments[3].nama,
+    team_id: _teams[3].id,
+    team_name: _teams[3].nama,
     kata_sandi: '',
     nama: 'Alwin',
     nip: '3222',
@@ -82,8 +110,8 @@ export const employees: EmployeeModel[] = [
     tanggal_diubah: new Date(),
   },
   {
-    departemen_id: departments[2].id,
-    departemen_name: departments[2].nama,
+    team_id: _teams[2].id,
+    team_name: _teams[2].nama,
     kata_sandi: '',
     nama: 'Ferdy',
     nip: '4111',

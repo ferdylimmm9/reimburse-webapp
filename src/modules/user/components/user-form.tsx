@@ -3,6 +3,7 @@ import Form from 'components/form';
 import Input from 'components/input';
 import useYupValidationResolver from 'hooks/use-yup-validation-resolver';
 import { FormLayout } from 'modules/common/layout';
+import { teams } from 'modules/team/components/team-form-type';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -22,7 +23,7 @@ export default function UserForm(props: UserFormProps) {
   const { user } = props;
   const defaultValues = React.useMemo<EmployeeFormType>(() => {
     return {
-      departemen_id: user?.departemen_id ?? '',
+      team_id: user?.team_id ?? '',
       kata_sandi: user?.kata_sandi ?? '',
       nama: user?.nama ?? '',
       nip: user?.nip ?? '',
@@ -48,8 +49,8 @@ export default function UserForm(props: UserFormProps) {
   );
 
   return (
-    <Form methods={methods} onSubmit={onSubmit}>
-      <FormLayout onDelete={() => {}}>
+    <Form methods={methods} onSubmit={onSubmit} defaultEditable={!props.user}>
+      <FormLayout isEditable>
         <Flex direction="column" gap={16}>
           {isEdit && (
             <Input
@@ -71,6 +72,20 @@ export default function UserForm(props: UserFormProps) {
             label="Peran"
             placeholder="Masukkan Peran"
             data={[EmployeeRoleEnum.admin, EmployeeRoleEnum.user]}
+          />
+          <Input
+            searchable
+            clearable
+            type="select"
+            name="team_id"
+            label="Team"
+            placeholder="Masukkan Team"
+            data={teams.map((team) => {
+              return {
+                value: team.id,
+                label: team.nama,
+              };
+            })}
           />
           <Input
             type="select"

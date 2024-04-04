@@ -1,4 +1,4 @@
-import { Flex } from '@mantine/core';
+import { Box, Flex, Text } from '@mantine/core';
 import Form from 'components/form';
 import Input from 'components/input';
 import useYupValidationResolver from 'hooks/use-yup-validation-resolver';
@@ -41,7 +41,11 @@ export default function StationeryForm(props: StationeryFormProps) {
     [],
   );
   return (
-    <Form methods={methods} onSubmit={onSubmit}>
+    <Form
+      methods={methods}
+      onSubmit={onSubmit}
+      defaultEditable={!props.stationery}
+    >
       <FormLayout>
         <Flex direction="column" gap={16}>
           <Input
@@ -58,6 +62,8 @@ export default function StationeryForm(props: StationeryFormProps) {
           />
           <Input type="number" name="harga" label="Harga" placeholder="Harga" />
         </Flex>
+        <Text mt={16}>File</Text>
+        <Box w={64} h={64} bg="gray" />
       </FormLayout>
     </Form>
   );

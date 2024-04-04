@@ -1,8 +1,7 @@
-import { Card, Flex, SimpleGrid, Text, Title } from '@mantine/core';
+import { Button, Card, Flex, SimpleGrid, Text, Title } from '@mantine/core';
 import {
   Bank,
   Books,
-  ChartLine,
   Icon,
   Money,
   PaperPlaneTilt,
@@ -12,9 +11,16 @@ import {
   Lock,
   Users,
   SignOut,
+  Graph,
 } from '@phosphor-icons/react';
 import NavigationRoutes from 'components/common/side-navigation/navigations';
+import useAuth from 'hooks/use-auth';
+import {
+  EmployeeRoleEnum,
+  employees,
+} from 'modules/user/components/user-form-type';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 export type NavigationItemType = {
@@ -24,11 +30,11 @@ export type NavigationItemType = {
 };
 
 export const adminNavigationItems: NavigationItemType[] = [
-  { link: NavigationRoutes.dashboard, label: 'Dashboard', icon: ChartLine },
+  { link: NavigationRoutes.teams, label: 'Team', icon: Graph },
   { link: NavigationRoutes.users, label: 'Karyawan', icon: Users },
   {
     link: NavigationRoutes.itineraries,
-    label: 'Trip',
+    label: 'Perjalanan',
     icon: PaperPlaneTilt,
   },
   {
@@ -57,7 +63,7 @@ export const userNavigationItems: NavigationItemType[] = [
   },
   {
     link: NavigationRoutes.itineraries,
-    label: 'Trip',
+    label: 'Perjalanan',
     icon: PaperPlaneTilt,
   },
   {
@@ -73,20 +79,52 @@ export const userNavigationItems: NavigationItemType[] = [
 ];
 
 export default function Home() {
-  const adminLinks = adminNavigationItems.map((item) => {
-    return (
-      <Link href={item.link} passHref key={item.link}>
-        <Card withBorder style={{ cursor: 'pointer' }}>
-          <Flex direction="column" justify="center" align="center">
-            <item.icon size={36} />
-            <Text ta="center" fw={600} mt={8}>
-              {item.label}
-            </Text>
-          </Flex>
-        </Card>
-      </Link>
-    );
-  });
+  const { user, handleUser } = useAuth();
+
+  const { replace } = useRouter();
+  const isAdmin = user?.peran === EmployeeRoleEnum.admin;
+  const isUser = user?.peran === EmployeeRoleEnum.user;
+
+  const onLogout = React.useCallback(() => {
+    handleUser(undefined);
+    // replace(NavigationRoutes.login);
+  }, [handleUser]);
+
+  const logoutItem = (
+    <Card
+      c="red"
+      withBorder
+      onClick={onLogout}
+      style={{ cursor: 'pointer', borderColor: '#fa5252' }}
+    >
+      <Flex direction="column" justify="center" align="center">
+        <SignOut size={36} />
+        <Text ta="center" fw={600} mt={8}>
+          Logout
+        </Text>
+      </Flex>
+    </Card>
+  );
+
+  const adminLinks = (
+    <>
+      {adminNavigationItems.map((item) => {
+        return (
+          <Link href={item.link} passHref key={item.link}>
+            <Card withBorder style={{ cursor: 'pointer' }}>
+              <Flex direction="column" justify="center" align="center">
+                <item.icon size={36} />
+                <Text ta="center" fw={600} mt={8}>
+                  {item.label}
+                </Text>
+              </Flex>
+            </Card>
+          </Link>
+        );
+      })}
+      {logoutItem}
+    </>
+  );
 
   const userLinks = (
     <>
@@ -104,33 +142,43 @@ export default function Home() {
           </Link>
         );
       })}
-      <Card
-        c="red"
-        withBorder
-        style={{ cursor: 'pointer', borderColor: '#fa5252' }}
-      >
-        <Flex direction="column" justify="center" align="center">
-          <SignOut size={36} />
-          <Text ta="center" fw={600} mt={8}>
-            Logout
-          </Text>
-        </Flex>
-      </Card>
+      {logoutItem}
     </>
+  );
+
+  const loginUser = (
+    <Button color="blue" fullWidth onClick={() => handleUser(employees[0])}>
+      Login User
+    </Button>
+  );
+  const loginAdmin = (
+    <Button color="cyan" fullWidth onClick={() => handleUser(employees[1])}>
+      Login Admin
+    </Button>
   );
 
   return (
     <>
       <Flex direction="row" gap={16} align="center">
         <User size={24} weight="bold" />
-        <Title order={6}>Hello, Alwin</Title>
+        <Title order={6}>Hello, {user?.nama ?? 'World'}</Title>
       </Flex>
-      <SimpleGrid cols={2} my={24}>
-        {adminLinks}
-      </SimpleGrid>
-      <SimpleGrid cols={2} my={24}>
-        {userLinks}
-      </SimpleGrid>
+      {isAdmin && (
+        <SimpleGrid cols={2} my={24}>
+          {adminLinks}
+        </SimpleGrid>
+      )}
+      {isUser && (
+        <SimpleGrid cols={2} my={24}>
+          {userLinks}
+        </SimpleGrid>
+      )}
+      {!user && (
+        <Flex w="100%" my={24} gap={24}>
+          {loginUser}
+          {loginAdmin}
+        </Flex>
+      )}
     </>
   );
 }

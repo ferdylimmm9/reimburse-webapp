@@ -1,16 +1,25 @@
 import { Box, Button, Card, Flex, Space, Title } from '@mantine/core';
 import { SignIn } from '@phosphor-icons/react';
+import NavigationRoutes from 'components/common/side-navigation/navigations';
 import Form from 'components/form';
 import Input from 'components/input';
+import useAuth from 'hooks/use-auth';
 import useYupValidationResolver from 'hooks/use-yup-validation-resolver';
+import { employees } from 'modules/user/components/user-form-type';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-import { LoginFormSchema } from './form-type';
+import { LoginFormSchema, LoginFormType } from './form-type';
 
 export default function Login() {
-  const defaultValues = React.useMemo(() => {
-    return {};
+  const { push } = useRouter();
+  const { handleUser } = useAuth();
+  const defaultValues = React.useMemo<LoginFormType>(() => {
+    return {
+      kata_sandi: '',
+      nip: '',
+    };
   }, []);
 
   const resolver = useYupValidationResolver(LoginFormSchema());
@@ -21,9 +30,13 @@ export default function Login() {
     mode: 'onChange',
   });
 
-  const onSubmit = React.useCallback(async (values) => {
-    console.log(values);
-  }, []);
+  const onSubmit = React.useCallback(
+    async (values) => {
+      handleUser(employees[1]);
+      push(NavigationRoutes.home);
+    },
+    [handleUser, push],
+  );
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
@@ -39,7 +52,6 @@ export default function Login() {
             name="nip"
             label="NIP"
             placeholder="Masukkan NIP"
-            required
           />
           <Space h={16} />
           <Input
@@ -47,7 +59,6 @@ export default function Login() {
             name="kata_sandi"
             label="Kata Sandi"
             placeholder="Masukkan Kata Sandi"
-            required
           />
           <Space h={16} />
           <Button

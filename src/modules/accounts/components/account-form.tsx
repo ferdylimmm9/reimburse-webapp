@@ -35,7 +35,11 @@ export default function AccountForm(props: AccountFormProps) {
 
   const onSubmit = React.useCallback(async (values: AccountFormType) => {}, []);
   return (
-    <Form methods={methods} onSubmit={onSubmit}>
+    <Form
+      methods={methods}
+      onSubmit={onSubmit}
+      defaultEditable={!props.account}
+    >
       <FormLayout>
         <Flex direction="column" gap={16}>
           <Input

@@ -41,7 +41,11 @@ export default function ItinenaryForm(props: ItinenaryFormProps) {
   );
 
   return (
-    <Form methods={methods} onSubmit={onSubmit}>
+    <Form
+      methods={methods}
+      onSubmit={onSubmit}
+      defaultEditable={!props.itinenary}
+    >
       <FormLayout>
         <Flex direction="column" gap={16}>
           <Input

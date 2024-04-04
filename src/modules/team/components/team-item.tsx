@@ -5,11 +5,11 @@ import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import { DepartmentModel } from './department-form-type';
+import { TeamModel } from './team-form-type';
 
-export default function DepartmentItem(props: DepartmentModel) {
+export default function TeamItem(props: TeamModel) {
   const { prefetch, push } = useRouter();
-  const route = `${NavigationRoutes.departments}/${props.id}`;
+  const route = `${NavigationRoutes.teams}/${props.id}`;
 
   React.useEffect(() => {
     prefetch(route);
@@ -19,6 +19,7 @@ export default function DepartmentItem(props: DepartmentModel) {
     <ListItem onClick={() => push(route)}>
       <Flex direction="column">
         <Title order={6}>{props.nama}</Title>
+        <Text fz={11}>Leader: {props.nama_leader}</Text>
         <Text fz={11}>{format(props.tanggal_dibuat, 'dd MMM yyyy')}</Text>
       </Flex>
     </ListItem>
