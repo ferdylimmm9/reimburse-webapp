@@ -1,10 +1,17 @@
 import * as Yup from 'yup';
 
+export enum AccountDetailTypeEnum {
+  outcome = 'outcome',
+  income = 'income',
+}
+
 export type AccountDetailModel = {
   id: string;
   kas_id: string;
   reimburse_id: string | null;
   deskripsi: string;
+  jenis: AccountDetailTypeEnum;
+  total: number;
   tanggal_dibuat: Date;
   tanggal_diubah: Date;
 };
@@ -39,6 +46,8 @@ export const accountDetails: AccountDetailModel[] = [
     reimburse_id: null,
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
+    total: 1200000,
+    jenis: AccountDetailTypeEnum.income,
   },
   {
     id: '2',
@@ -48,6 +57,8 @@ export const accountDetails: AccountDetailModel[] = [
     reimburse_id: null,
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
+    total: 1300000,
+    jenis: AccountDetailTypeEnum.outcome,
   },
   {
     id: '3',
@@ -57,6 +68,8 @@ export const accountDetails: AccountDetailModel[] = [
     reimburse_id: null,
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
+    total: 1400000,
+    jenis: AccountDetailTypeEnum.income,
   },
 ];
 
