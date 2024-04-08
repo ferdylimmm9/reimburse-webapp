@@ -15,9 +15,11 @@ import {
 } from '@phosphor-icons/react';
 import NavigationRoutes from 'components/common/side-navigation/navigations';
 import useAuth from 'hooks/use-auth';
+import AccountStatistic from 'modules/accounts/components/account-statistic';
 import { employees } from 'modules/user/components/user-form-type';
+import UserStatistic from 'modules/user/components/user-statistic';
+import UsersStatistic from 'modules/user/components/users-statistic';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 export type NavigationItemType = {
@@ -78,7 +80,7 @@ export const userNavigationItems: NavigationItemType[] = [
 export default function Home() {
   const { user, handleUser, isAdmin, isUser } = useAuth();
 
-  const { replace } = useRouter();
+  // const { replace } = useRouter();
 
   const onLogout = React.useCallback(() => {
     handleUser(undefined);
@@ -152,11 +154,37 @@ export default function Home() {
     </Button>
   );
 
+  const accountStatistics = isAdmin && (
+    <>
+      <Title order={6}>Statistik Kas</Title>
+      <AccountStatistic />
+    </>
+  );
+
+  const employeeStatistics = isAdmin && (
+    <>
+      <Title order={6}>Statistik Karyawan</Title>
+      <UsersStatistic users={employees} />
+    </>
+  );
+
+  const reimburseStatistics = (isUser || isAdmin) && (
+    <>
+      {isAdmin && <Title order={6}>Statistik Reimburse</Title>}
+      <UserStatistic userId={isAdmin ? undefined : user?.nip} />
+    </>
+  );
+
   return (
     <>
       <Flex direction="row" gap={16} align="center">
         <User size={24} weight="bold" />
         <Title order={6}>Hello, {user?.nama ?? 'World'}</Title>
+      </Flex>
+      <Flex direction="column" gap={16} mt={16}>
+        {accountStatistics}
+        {employeeStatistics}
+        {reimburseStatistics}
       </Flex>
       {isAdmin && (
         <SimpleGrid cols={2} my={24}>

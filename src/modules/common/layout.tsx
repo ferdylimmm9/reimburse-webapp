@@ -57,7 +57,7 @@ export function FormLayout({
     !!disabled && !!onDelete
       ? ({
           onClick: onDelete,
-          children: <Trash size={16} />,
+          children: <Trash size={24} />,
           color: 'red',
           variant: 'subtle',
         } as React.ComponentProps<typeof ActionIcon<'button'>>)
@@ -109,7 +109,7 @@ export function ListLayout({ children, createNavigation }: ListLayoutProps) {
         isAdmin
           ? {
               onClick: () => push(createNavigation),
-              children: <Plus size={16} />,
+              children: <Plus size={24} />,
             }
           : undefined
       }

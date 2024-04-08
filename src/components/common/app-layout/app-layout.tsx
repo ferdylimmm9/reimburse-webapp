@@ -99,7 +99,7 @@ export default function AppLayout(props: AppLayoutProps) {
               variant="subtle"
               color="dark"
               justify="space-between"
-              leftSection={<ArrowLeft size={16} />}
+              leftSection={<ArrowLeft size={24} />}
               onClick={back}
               children={label}
               {...backButtonProps}
