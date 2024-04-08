@@ -8,9 +8,9 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Check, X } from '@phosphor-icons/react';
+import { formatDateTime } from 'common/helpers/string';
 import NavigationRoutes from 'components/common/side-navigation/navigations';
 import Form from 'components/form';
-import { format } from 'date-fns';
 import useAuth from 'hooks/use-auth';
 import useYupValidationResolver from 'hooks/use-yup-validation-resolver';
 import { FormLayout } from 'modules/common/layout';
@@ -138,7 +138,7 @@ export default function ReimburseForm(props: ReimburseFormProps) {
     if (reimburse?.tanggal_pelunasan) {
       return (
         <Text fz={11} my={16}>
-          Diterima: {format(reimburse.tanggal_pelunasan, 'dd MMM yyyy, HH:mm')}
+          Diterima: {formatDateTime(reimburse.tanggal_pelunasan)}
         </Text>
       );
     }
@@ -146,7 +146,7 @@ export default function ReimburseForm(props: ReimburseFormProps) {
       return (
         <Flex direction="column" gap={16} my={16}>
           <Text fz={11}>
-            Ditolak: {format(reimburse.tanggal_penolakan, 'dd MMM yyyy, HH:mm')}
+            Ditolak: {formatDateTime(reimburse.tanggal_penolakan)}
           </Text>
           <Text fz={11}>Alasan Ditolak: {reimburse.deskripsi_penolakan}</Text>
           {copyButton}

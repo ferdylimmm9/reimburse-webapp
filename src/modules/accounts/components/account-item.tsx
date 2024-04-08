@@ -1,7 +1,7 @@
 import { Flex, Text, Title } from '@mantine/core';
+import { formatDateTime } from 'common/helpers/string';
 import ListItem from 'components/common/list-item/list-item';
 import NavigationRoutes from 'components/common/side-navigation/navigations';
-import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -21,9 +21,7 @@ export default function AccountItem(props: AccountModel) {
         <Flex direction="column" gap={4}>
           <Title order={6}>{props.nama}</Title>
           <Text fz={12}>{props.deskripsi}</Text>
-          <Text fz={11}>
-            {format(props.tanggal_diubah, 'dd MMM yyyy, HH:mm')}
-          </Text>
+          <Text fz={11}>{formatDateTime(props.tanggal_diubah)}</Text>
         </Flex>
       </Flex>
     </ListItem>

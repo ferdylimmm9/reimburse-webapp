@@ -1,3 +1,7 @@
+import {
+  ReimburseModel,
+  reimburses,
+} from 'modules/reimburse/components/reimburse-form-type';
 import * as Yup from 'yup';
 
 export enum AccountDetailTypeEnum {
@@ -8,7 +12,7 @@ export enum AccountDetailTypeEnum {
 export type AccountDetailModel = {
   id: string;
   kas_id: string;
-  reimburse_id: string | null;
+  reimburse: ReimburseModel | null;
   deskripsi: string;
   jenis: AccountDetailTypeEnum;
   total: number;
@@ -25,6 +29,17 @@ export type AccountModel = {
   details: AccountDetailModel[];
 };
 
+export const AccountDetailFormSchema = () =>
+  Yup.object({
+    kas_id: Yup.string().default(''),
+    reimburse_id: Yup.string().default(''),
+    deskripsi: Yup.string().default(''),
+    jenis: Yup.mixed<AccountDetailTypeEnum>()
+      .oneOf(Object.values(AccountDetailTypeEnum))
+      .default(AccountDetailTypeEnum.income),
+    total: Yup.number().default(0),
+  });
+
 export const AccountFormSchema = () =>
   Yup.object({
     nama: Yup.string().required(),
@@ -37,13 +52,19 @@ export type AccountFormType = Yup.InferType<
   data?: AccountModel;
 };
 
+export type AccountDetailFormType = Yup.InferType<
+  ReturnType<typeof AccountDetailFormSchema>
+> & {
+  data?: AccountDetailModel;
+};
+
 export const accountDetails: AccountDetailModel[] = [
   {
     id: '1',
     kas_id: '1',
     deskripsi:
       'Voluptate deserunt sunt aliquip ullamco nulla occaecat laboris ullamco occaecat qui.',
-    reimburse_id: null,
+    reimburse: null,
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
     total: 1200000,
@@ -54,7 +75,7 @@ export const accountDetails: AccountDetailModel[] = [
     kas_id: '1',
     deskripsi:
       'Voluptate deserunt sunt aliquip ullamco nulla occaecat laboris ullamco occaecat qui.',
-    reimburse_id: null,
+    reimburse: reimburses[0],
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
     total: 1300000,
@@ -65,7 +86,7 @@ export const accountDetails: AccountDetailModel[] = [
     kas_id: '1',
     deskripsi:
       'Voluptate deserunt sunt aliquip ullamco nulla occaecat laboris ullamco occaecat qui.',
-    reimburse_id: null,
+    reimburse: null,
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
     total: 1400000,
@@ -90,7 +111,7 @@ export const accounts: AccountModel[] = [
       'Aliquip duis anim eu anim amet dolor exercitation qui aute irure duis nostrud est ex.',
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
-    details: [],
+    details: accountDetails,
   },
   {
     id: '3',
@@ -99,6 +120,6 @@ export const accounts: AccountModel[] = [
       'Aliquip duis anim eu anim amet dolor exercitation qui aute irure duis nostrud est ex.',
     tanggal_dibuat: new Date(),
     tanggal_diubah: new Date(),
-    details: [],
+    details: accountDetails,
   },
 ];
