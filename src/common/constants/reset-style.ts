@@ -17,6 +17,8 @@ html {
 }
 html, body {
   overflow: hidden;
+  position: relative;
+  height: 100%;
 }
 #__next > div:first-of-type {
   width: 100%;
